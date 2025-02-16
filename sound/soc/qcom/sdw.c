@@ -27,11 +27,14 @@ int qcom_snd_sdw_startup(struct snd_pcm_substream *substream)
 	struct snd_soc_dai *codec_dai;
 	int ret, i;
 
+	printk("cosmo: qcom_snd_sdw_startup\n      rtd = %p\n      cpu_dai = %p\n      codec_dai = %p\n", rtd, cpu_dai, codec_dai);
+
 	sruntime = sdw_alloc_stream(cpu_dai->name);
 	if (!sruntime)
 		return -ENOMEM;
 
 	for_each_rtd_codec_dais(rtd, i, codec_dai) {
+		printk("      connecting codec_dai = %p\n", codec_dai);
 		ret = snd_soc_dai_set_stream(codec_dai, sruntime,
 					     substream->stream);
 		if (ret < 0 && ret != -ENOTSUPP) {
