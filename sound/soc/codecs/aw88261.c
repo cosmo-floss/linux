@@ -26,6 +26,7 @@ static const struct regmap_config aw88261_remap_config = {
 
 static void aw88261_dev_set_volume(struct aw_device *aw_dev, unsigned int value)
 {
+	printk("cosmo: entering aw88261_dev_set_volume\n");
 	struct aw_volume_desc *vol_desc = &aw_dev->volume_desc;
 	unsigned int real_value, volume;
 	unsigned int reg_value;
@@ -44,6 +45,7 @@ static void aw88261_dev_set_volume(struct aw_device *aw_dev, unsigned int value)
 
 static void aw88261_dev_fade_in(struct aw_device *aw_dev)
 {
+	printk("cosmo: entering aw88261_dev_fade_in\n");
 	struct aw_volume_desc *desc = &aw_dev->volume_desc;
 	int fade_in_vol = desc->ctl_volume;
 	int fade_step = aw_dev->fade_step;
@@ -66,6 +68,7 @@ static void aw88261_dev_fade_in(struct aw_device *aw_dev)
 
 static void aw88261_dev_fade_out(struct aw_device *aw_dev)
 {
+	printk("cosmo: entering aw88261_dev_fade_out\n");
 	struct aw_volume_desc *desc = &aw_dev->volume_desc;
 	int fade_step = aw_dev->fade_step;
 	int i;
@@ -88,6 +91,7 @@ static void aw88261_dev_fade_out(struct aw_device *aw_dev)
 
 static void aw88261_dev_i2s_tx_enable(struct aw_device *aw_dev, bool flag)
 {
+	printk("cosmo: entering aw88261_dev_i2s_tx_enable\n");
 	if (flag)
 		regmap_update_bits(aw_dev->regmap, AW88261_I2SCFG1_REG,
 			~AW88261_I2STXEN_MASK, AW88261_I2STXEN_ENABLE_VALUE);
@@ -98,6 +102,7 @@ static void aw88261_dev_i2s_tx_enable(struct aw_device *aw_dev, bool flag)
 
 static void aw88261_dev_pwd(struct aw_device *aw_dev, bool pwd)
 {
+	printk("cosmo: entering aw88261_dev_pwd\n");
 	if (pwd)
 		regmap_update_bits(aw_dev->regmap, AW88261_SYSCTRL_REG,
 				~AW88261_PWDN_MASK, AW88261_PWDN_POWER_DOWN_VALUE);
@@ -108,6 +113,7 @@ static void aw88261_dev_pwd(struct aw_device *aw_dev, bool pwd)
 
 static void aw88261_dev_amppd(struct aw_device *aw_dev, bool amppd)
 {
+	printk("cosmo: entering aw88261_dev_amppd\n");
 	if (amppd)
 		regmap_update_bits(aw_dev->regmap, AW88261_SYSCTRL_REG,
 				~AW88261_AMPPD_MASK, AW88261_AMPPD_POWER_DOWN_VALUE);
@@ -118,6 +124,7 @@ static void aw88261_dev_amppd(struct aw_device *aw_dev, bool amppd)
 
 static void aw88261_dev_mute(struct aw_device *aw_dev, bool is_mute)
 {
+	printk("cosmo: entering aw88261_dev_mute\n");
 	if (is_mute) {
 		aw88261_dev_fade_out(aw_dev);
 		regmap_update_bits(aw_dev->regmap, AW88261_SYSCTRL_REG,
@@ -131,6 +138,7 @@ static void aw88261_dev_mute(struct aw_device *aw_dev, bool is_mute)
 
 static void aw88261_dev_clear_int_status(struct aw_device *aw_dev)
 {
+	printk("cosmo: entering aw88261_dev_clear_int_status\n");
 	unsigned int int_status;
 
 	/* read int status and clear */
@@ -143,6 +151,7 @@ static void aw88261_dev_clear_int_status(struct aw_device *aw_dev)
 
 static int aw88261_dev_get_iis_status(struct aw_device *aw_dev)
 {
+	printk("cosmo: entering aw88261_dev_get_iis_status\n");
 	unsigned int reg_val;
 	int ret;
 
@@ -159,6 +168,7 @@ static int aw88261_dev_get_iis_status(struct aw_device *aw_dev)
 
 static int aw88261_dev_check_mode1_pll(struct aw_device *aw_dev)
 {
+	printk("cosmo: entering aw88261_dev_check_mode1_pll\n");
 	int ret, i;
 
 	for (i = 0; i < AW88261_DEV_SYSST_CHECK_MAX; i++) {
@@ -176,6 +186,7 @@ static int aw88261_dev_check_mode1_pll(struct aw_device *aw_dev)
 
 static int aw88261_dev_check_mode2_pll(struct aw_device *aw_dev)
 {
+	printk("cosmo: entering aw88261_dev_check_mode2_pll\n");
 	unsigned int reg_val;
 	int ret, i;
 
@@ -226,6 +237,7 @@ static int aw88261_dev_check_mode2_pll(struct aw_device *aw_dev)
 
 static int aw88261_dev_check_syspll(struct aw_device *aw_dev)
 {
+	printk("cosmo: entering aw88261_dev_check_syspll\n");
 	int ret;
 
 	ret = aw88261_dev_check_mode1_pll(aw_dev);
@@ -243,6 +255,7 @@ static int aw88261_dev_check_syspll(struct aw_device *aw_dev)
 
 static int aw88261_dev_check_sysst(struct aw_device *aw_dev)
 {
+	printk("cosmo: entering aw88261_dev_check_sysst\n");
 	unsigned int check_val;
 	unsigned int reg_val;
 	int ret, i;
@@ -268,6 +281,7 @@ static int aw88261_dev_check_sysst(struct aw_device *aw_dev)
 
 static void aw88261_dev_uls_hmute(struct aw_device *aw_dev, bool uls_hmute)
 {
+	printk("cosmo: entering aw88261_dev_check_uls_hmute\n");
 	if (uls_hmute)
 		regmap_update_bits(aw_dev->regmap, AW88261_SYSCTRL_REG,
 				~AW88261_ULS_HMUTE_MASK,
@@ -280,6 +294,7 @@ static void aw88261_dev_uls_hmute(struct aw_device *aw_dev, bool uls_hmute)
 
 static void aw88261_reg_force_set(struct aw88261 *aw88261)
 {
+	printk("cosmo: entering aw88261_reg_force_set\n");
 	if (aw88261->frcset_en == AW88261_FRCSET_ENABLE) {
 		/* set FORCE_PWM */
 		regmap_update_bits(aw88261->regmap, AW88261_BSTCTRL3_REG,
@@ -306,6 +321,7 @@ static void aw88261_reg_force_set(struct aw88261 *aw88261)
 
 static int aw88261_dev_get_icalk(struct aw_device *aw_dev, int16_t *icalk)
 {
+	printk("cosmo: entering aw88261_dev_get_icalk\n");
 	u16 reg_icalk, reg_icalkl;
 	unsigned int reg_val;
 	int ret;
@@ -334,6 +350,7 @@ static int aw88261_dev_get_icalk(struct aw_device *aw_dev, int16_t *icalk)
 
 static int aw88261_dev_get_vcalk(struct aw_device *aw_dev, int16_t *vcalk)
 {
+	printk("cosmo: entering aw88261_dev_get_vcalk\n");
 	u16 reg_vcalk, reg_vcalkl;
 	unsigned int reg_val;
 	int ret;
@@ -361,6 +378,7 @@ static int aw88261_dev_get_vcalk(struct aw_device *aw_dev, int16_t *vcalk)
 
 static int aw88261_dev_set_vcalb(struct aw_device *aw_dev)
 {
+	printk("cosmo: entering aw88261_dev_get_vcalb\n");
 	int16_t icalk_val, vcalk_val;
 	int icalk, vcalk, vcalb;
 	u32 reg_val;
@@ -392,6 +410,7 @@ static int aw88261_dev_set_vcalb(struct aw_device *aw_dev)
 static int aw88261_dev_reg_update(struct aw88261 *aw88261,
 					unsigned char *data, unsigned int len)
 {
+	printk("cosmo: entering aw88261_dev_reg_update\n");
 	struct aw_device *aw_dev = aw88261->aw_pa;
 	struct aw_volume_desc *vol_desc = &aw_dev->volume_desc;
 	unsigned int read_val, efcheck_val, read_vol;
@@ -478,6 +497,7 @@ static int aw88261_dev_reg_update(struct aw88261 *aw88261,
 
 static int aw88261_dev_get_prof_name(struct aw_device *aw_dev, int index, char **prof_name)
 {
+	printk("cosmo: entering aw88261_dev_get_prof_name\n");
 	struct aw_prof_info *prof_info = &aw_dev->prof_info;
 	struct aw_prof_desc *prof_desc;
 
@@ -497,6 +517,7 @@ static int aw88261_dev_get_prof_name(struct aw_device *aw_dev, int index, char *
 static int aw88261_dev_get_prof_data(struct aw_device *aw_dev, int index,
 			struct aw_prof_desc **prof_desc)
 {
+	printk("cosmo: entering aw88261_dev_get_prof_data\n");
 	if ((index >= aw_dev->prof_info.count) || (index < 0)) {
 		dev_err(aw_dev->dev, "%s: index[%d] overflow count[%d]\n",
 				__func__, index, aw_dev->prof_info.count);
@@ -510,6 +531,7 @@ static int aw88261_dev_get_prof_data(struct aw_device *aw_dev, int index,
 
 static int aw88261_dev_fw_update(struct aw88261 *aw88261)
 {
+	printk("cosmo: entering aw88261_dev_fw_update\n");
 	struct aw_device *aw_dev = aw88261->aw_pa;
 	struct aw_prof_desc *prof_index_desc;
 	struct aw_sec_data_desc *sec_desc;
@@ -544,6 +566,7 @@ static int aw88261_dev_fw_update(struct aw88261 *aw88261)
 
 static int aw88261_dev_start(struct aw88261 *aw88261)
 {
+	printk("cosmo: entering aw88261_dev_start\n");
 	struct aw_device *aw_dev = aw88261->aw_pa;
 	int ret;
 
@@ -607,6 +630,7 @@ pll_check_fail:
 
 static int aw88261_dev_stop(struct aw_device *aw_dev)
 {
+	printk("cosmo: entering aw88261_dev_stop\n");
 	if (aw_dev->status == AW88261_DEV_PW_OFF) {
 		dev_info(aw_dev->dev, "already power off");
 		return 0;
@@ -636,6 +660,7 @@ static int aw88261_dev_stop(struct aw_device *aw_dev)
 
 static int aw88261_reg_update(struct aw88261 *aw88261, bool force)
 {
+	printk("cosmo: entering aw88261_reg_update\n");
 	struct aw_device *aw_dev = aw88261->aw_pa;
 	int ret;
 
@@ -665,6 +690,7 @@ static int aw88261_reg_update(struct aw88261 *aw88261, bool force)
 
 static void aw88261_start_pa(struct aw88261 *aw88261)
 {
+	printk("cosmo: entering aw88261_start_pa\n");
 	int ret, i;
 
 	for (i = 0; i < AW88261_START_RETRIES; i++) {
@@ -686,6 +712,7 @@ static void aw88261_start_pa(struct aw88261 *aw88261)
 
 static void aw88261_startup_work(struct work_struct *work)
 {
+	printk("cosmo: entering aw88261_startup_work\n");
 	struct aw88261 *aw88261 =
 		container_of(work, struct aw88261, start_work.work);
 
@@ -696,6 +723,7 @@ static void aw88261_startup_work(struct work_struct *work)
 
 static void aw88261_start(struct aw88261 *aw88261, bool sync_start)
 {
+	printk("cosmo: entering aw88261_start\n");
 	if (aw88261->aw_pa->fw_status != AW88261_DEV_FW_OK)
 		return;
 
@@ -734,6 +762,7 @@ static struct snd_soc_dai_driver aw88261_dai[] = {
 static int aw88261_get_fade_in_time(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
+	printk("cosmo: entering aw88261_get_fade_in_time\n");
 	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(component);
 	struct aw_device *aw_dev = aw88261->aw_pa;
@@ -746,6 +775,7 @@ static int aw88261_get_fade_in_time(struct snd_kcontrol *kcontrol,
 static int aw88261_set_fade_in_time(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
+	printk("cosmo: entering aw88261_set_fade_in_time\n");
 	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(component);
 	struct soc_mixer_control *mc =
@@ -769,6 +799,7 @@ static int aw88261_set_fade_in_time(struct snd_kcontrol *kcontrol,
 static int aw88261_get_fade_out_time(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
+	printk("cosmo: entering aw88261_get_fade_out_time\n");
 	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(component);
 	struct aw_device *aw_dev = aw88261->aw_pa;
@@ -781,6 +812,7 @@ static int aw88261_get_fade_out_time(struct snd_kcontrol *kcontrol,
 static int aw88261_set_fade_out_time(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
+	printk("cosmo: entering aw88261_get_fade_out_time\n");
 	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(component);
 	struct soc_mixer_control *mc =
@@ -802,6 +834,7 @@ static int aw88261_set_fade_out_time(struct snd_kcontrol *kcontrol,
 
 static int aw88261_dev_set_profile_index(struct aw_device *aw_dev, int index)
 {
+	printk("cosmo: entering aw88261_dev_set_profile_index\n");
 	/* check the index whether is valid */
 	if ((index >= aw_dev->prof_info.count) || (index < 0))
 		return -EINVAL;
@@ -817,6 +850,7 @@ static int aw88261_dev_set_profile_index(struct aw_device *aw_dev, int index)
 static int aw88261_profile_info(struct snd_kcontrol *kcontrol,
 			 struct snd_ctl_elem_info *uinfo)
 {
+	printk("cosmo: entering aw88261_profile_info\n");
 	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(codec);
 	char *prof_name, *name;
@@ -854,6 +888,7 @@ static int aw88261_profile_info(struct snd_kcontrol *kcontrol,
 static int aw88261_profile_get(struct snd_kcontrol *kcontrol,
 			struct snd_ctl_elem_value *ucontrol)
 {
+	printk("cosmo: entering aw88261_profile_get\n");
 	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(codec);
 
@@ -865,6 +900,7 @@ static int aw88261_profile_get(struct snd_kcontrol *kcontrol,
 static int aw88261_profile_set(struct snd_kcontrol *kcontrol,
 		struct snd_ctl_elem_value *ucontrol)
 {
+	printk("cosmo: entering aw88261_profile_set\n");
 	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(codec);
 	int ret;
@@ -891,6 +927,7 @@ static int aw88261_profile_set(struct snd_kcontrol *kcontrol,
 static int aw88261_volume_get(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
+	printk("cosmo: entering aw88261_volume_get\n");
 	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(codec);
 	struct aw_volume_desc *vol_desc = &aw88261->aw_pa->volume_desc;
@@ -903,6 +940,7 @@ static int aw88261_volume_get(struct snd_kcontrol *kcontrol,
 static int aw88261_volume_set(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
+	printk("cosmo: entering aw88261_volume_set\n");
 	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(codec);
 	struct aw_volume_desc *vol_desc = &aw88261->aw_pa->volume_desc;
@@ -928,6 +966,7 @@ static int aw88261_volume_set(struct snd_kcontrol *kcontrol,
 static int aw88261_get_fade_step(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
+	printk("cosmo: entering aw88261_get_fade_step\n");
 	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(codec);
 
@@ -939,6 +978,7 @@ static int aw88261_get_fade_step(struct snd_kcontrol *kcontrol,
 static int aw88261_set_fade_step(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
+	printk("cosmo: entering aw88261_set_fade_step\n");
 	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(codec);
 	struct soc_mixer_control *mc =
@@ -974,6 +1014,7 @@ static const struct snd_kcontrol_new aw88261_controls[] = {
 static int aw88261_playback_event(struct snd_soc_dapm_widget *w,
 				struct snd_kcontrol *k, int event)
 {
+	printk("cosmo: entering aw88261_playback_event\n");
 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(component);
 
@@ -1012,6 +1053,7 @@ static const struct snd_soc_dapm_route aw88261_audio_map[] = {
 
 static int aw88261_frcset_check(struct aw88261 *aw88261)
 {
+	printk("cosmo: entering aw88261_frcset_check\n");
 	unsigned int reg_val;
 	u16 temh, teml, tem;
 	int ret;
@@ -1044,6 +1086,7 @@ static int aw88261_frcset_check(struct aw88261 *aw88261)
 
 static int aw88261_dev_init(struct aw88261 *aw88261, struct aw_container *aw_cfg)
 {
+	printk("cosmo: entering aw88261_dev_init\n");
 	struct aw_device *aw_dev = aw88261->aw_pa;
 	int ret;
 
@@ -1093,6 +1136,7 @@ static int aw88261_dev_init(struct aw88261 *aw88261, struct aw_container *aw_cfg
 
 static int aw88261_request_firmware_file(struct aw88261 *aw88261)
 {
+	printk("cosmo: entering aw88261_request_firmware_file\n");
 	const struct firmware *cont = NULL;
 	int ret;
 
@@ -1133,6 +1177,7 @@ static int aw88261_request_firmware_file(struct aw88261 *aw88261)
 
 static int aw88261_codec_probe(struct snd_soc_component *component)
 {
+	printk("cosmo: entering aw88261_codec_probe\n");
 	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(component);
 	int ret;
@@ -1164,6 +1209,7 @@ static int aw88261_codec_probe(struct snd_soc_component *component)
 
 static void aw88261_codec_remove(struct snd_soc_component *aw_codec)
 {
+	printk("cosmo: entering aw88261_codec_remove\n");
 	struct aw88261 *aw88261 = snd_soc_component_get_drvdata(aw_codec);
 
 	cancel_delayed_work_sync(&aw88261->start_work);
@@ -1176,6 +1222,7 @@ static const struct snd_soc_component_driver soc_codec_dev_aw88261 = {
 
 static void aw88261_parse_channel_dt(struct aw88261 *aw88261)
 {
+	printk("cosmo: entering aw88261_parse_channel_dt\n");
 	struct aw_device *aw_dev = aw88261->aw_pa;
 	struct device_node *np = aw_dev->dev->of_node;
 	u32 channel_value = AW88261_DEV_DEFAULT_CH;
@@ -1188,6 +1235,7 @@ static void aw88261_parse_channel_dt(struct aw88261 *aw88261)
 
 static int aw88261_init(struct aw88261 **aw88261, struct i2c_client *i2c, struct regmap *regmap)
 {
+	printk("cosmo: entering aw88261_init\n");
 	struct aw_device *aw_dev;
 	unsigned int chip_id;
 	int ret;
@@ -1230,6 +1278,7 @@ static int aw88261_init(struct aw88261 **aw88261, struct i2c_client *i2c, struct
 
 static int aw88261_i2c_probe(struct i2c_client *i2c)
 {
+	printk("cosmo: entering aw88261_i2c_probe\n");
 	struct aw88261 *aw88261;
 	int ret;
 
