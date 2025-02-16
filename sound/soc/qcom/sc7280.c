@@ -349,6 +349,8 @@ static int sc7280_snd_startup(struct snd_pcm_substream *substream)
 	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
 	int ret = 0;
 
+	printk("cosmo: sc7280_snd_startup\n      rtd = %p\n      cpu_dai = %p\n      codec_dai = %p\n", rtd, cpu_dai, codec_dai);
+
 	switch (cpu_dai->id) {
 	case MI2S_PRIMARY:
 		ret = sc7280_rt5682_init(rtd);
@@ -368,6 +370,7 @@ static int sc7280_snd_startup(struct snd_pcm_substream *substream)
 		break;
 	}
 
+	printk("cosmo: sc7280_snd_startup calling qcom_snd_sdw_startup\n");
 	return qcom_snd_sdw_startup(substream);
 }
 
