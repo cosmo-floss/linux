@@ -182,9 +182,12 @@
 		regulator-name = "USB_REDRIVE_1V8";
 		regulator-min-microvolt = <1800000>;
 		regulator-max-microvolt = <1800000>;
+
 		gpio = <&tlmm 61 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
+
 		vin-supply = <&vreg_bob>;
+
 		regulator-boot-on;
 
 		pinctrl-0 = <&usb_redrive_1v8_en_default>;
@@ -870,6 +873,8 @@
 		};
 	};
 
+	/* Pixelworks @ 26 */
+
 	typec-mux@42 {
 		compatible = "ocs,ocp96011", "fcs,fsa4480";
 		reg = <0x42>;
@@ -889,7 +894,6 @@
 		};
 	};
 
-	/* Pixelworks @ 26 */
 	/* AW86927FCR haptics @ 5a */
 };
 
@@ -962,20 +966,6 @@
 	status = "okay";
 };
 
-&lpass_rx_macro {
-	status = "okay";
-};
-
-&lpass_tx_macro {
-	status = "okay";
-};
-
-&lpass_va_macro {
-	qcom,dmic-sample-rate = <4800000>;	// Check these two, copied from spacewar
-	vdd-micb-supply = <&vreg_bob>;
-	status = "okay";
-};
-
 &mdss {
 	status = "okay";
 };
@@ -986,7 +976,6 @@
 
 &mdss_dp_out {
 	data-lanes = <0 1>;
-	remote-endpoint = <&usb_dp_qmpphy_dp_in>;
 };
 
 &mdss_dsi {
@@ -1228,20 +1217,6 @@
 	};
 };
 
-&q6asmdai {
-	dai@0 {
-		reg = <0>;
-	};
-
-	dai@1 {
-		reg = <1>;
-	};
-
-	dai@2 {
-		reg = <2>;
-	};
-};
-
 &qup_spi13_cs {
 	drive-strength = <6>;
 	bias-disable;
@@ -1316,19 +1291,24 @@
 };
 
 &sound {
-	compatible = "fairphone,fp5-sndcard", "qcom,qcm6490-idp-sndcard";
+	//compatible = "fairphone,fp5-sndcard", "qcom,qcm6490-idp-sndcard";
+	compatible = "qcom,sm7325-sndcard",
+		     "qcom,sm8250-sndcard";
 	model = "Fairphone 5";
 
 	audio-routing = "IN1_HPHL", "HPHL_OUT",
 			"IN2_HPHR", "HPHR_OUT",
 			"AMIC1", "MIC BIAS1",
 			"AMIC2", "MIC BIAS2",
-			"AMIC3", "MIC BIAS3",
-			"AMIC4", "MIC BIAS4",
+			"AMIC3", "MIC BIAS1", // Unused?
+			"AMIC4", "MIC BIAS3",
+			"AMIC5", "MIC BIAS4",
+			/*"TX SWR_ADC0", "ADC1_OUTPUT", // txmacro < v9.2
+			"TX SWR_ADC1", "ADC2_OUTPUT";*/
 			"TX SWR_INPUT0", "ADC1_OUTPUT", // txmacro >= v9.2
 			"TX SWR_INPUT1", "ADC2_OUTPUT",
-			"TX SWR_INPUT2", "ADC3_OUTPUT",
-			"TX SWR_INPUT3", "ADC4_OUTPUT";
+			"TX SWR_INPUT4", "ADC3_OUTPUT",
+			"TX SWR_INPUT5", "ADC4_OUTPUT";
 
 	mm1-dai-link {
 		link-name = "MultiMedia1";
@@ -1393,36 +1373,13 @@
 	touchscreen@0 {
 		compatible = "goodix,gt9897";
 		reg = <0>;
-		interrupt-parent = <&tlmm>;
-		interrupts = <81 IRQ_TYPE_LEVEL_LOW>;
+		interrupts-extended = <&tlmm 81 IRQ_TYPE_LEVEL_LOW>;
 		reset-gpios = <&tlmm 105 GPIO_ACTIVE_LOW>;
 		avdd-supply = <&vreg_l3c>;
 		vddio-supply = <&vreg_l2c>;
 		spi-max-frequency = <1000000>;
 		touchscreen-size-x = <1224>;
 		touchscreen-size-y = <2700>;
-	};
-};
-
-&swr0 {
-	status = "okay";
-
-	wcd_rx: codec@0,4 {
-		compatible = "sdw20217010d00";
-		reg = <0 4>;
-
-		qcom,rx-port-mapping = <1 2 3 4 5>;
-	};
-};
-
-&swr1 {
-	status = "okay";
-
-	wcd_tx: codec@0,3 {
-		compatible = "sdw20217010d00";
-		reg = <0 3>;
-
-		qcom,tx-port-mapping = <1 2 3 4>;
 	};
 };
 
@@ -1480,19 +1437,6 @@
 		function = "mdp_vsync";
 		drive-strength = <2>;
 		bias-pull-down;
-	};
-
-	wcd_reset_n: wcd-reset-n-state {		// These two match sc7280-idp
-		pins = "gpio83";
-		function = "gpio";
-		drive-strength = <8>;
-	};
-
-	wcd_reset_n_sleep: wcd-reset-n-sleep-state {
-		pins = "gpio83";
-		function = "gpio";
-		drive-strength = <8>;
-		bias-disable;
 	};
 
 	pm8008_int_default: pm8008-int-default-state {
@@ -1560,6 +1504,19 @@
 		drive-strength = <2>;
 		bias-disable;
 		output-high;
+	};
+	
+	wcd_reset_n: wcd-reset-n-state {		// These two match sc7280-idp
+		pins = "gpio83";
+		function = "gpio";
+		drive-strength = <8>;
+	};
+
+	wcd_reset_n_sleep: wcd-reset-n-sleep-state {
+		pins = "gpio83";
+		function = "gpio";
+		drive-strength = <8>;
+		bias-disable;
 	};
 };
 
@@ -1635,10 +1592,6 @@
 	remote-endpoint = <&pmic_glink_hs_in>;
 };
 
-&usb_1_dwc3_ss {
-	remote-endpoint = <&usb_dp_qmpphy_usb_ss_in>;
-};
-
 &usb_1_hsphy {
 	vdda-pll-supply = <&vreg_l10c>;
 	vdda18-supply = <&vreg_l1c>;
@@ -1662,21 +1615,11 @@
 	vdda-phy-supply = <&vreg_l6b>;
 	vdda-pll-supply = <&vreg_l1b>;
 
-	orientation-switch;
-
 	status = "okay";
-};
-
-&usb_dp_qmpphy_dp_in {
-	remote-endpoint = <&mdss_dp_out>;
 };
 
 &usb_dp_qmpphy_out {
 	remote-endpoint = <&redriver_ss_in>;
-};
-
-&usb_dp_qmpphy_usb_ss_in {
-	remote-endpoint = <&usb_1_dwc3_ss>;
 };
 
 &venus {
@@ -1688,3 +1631,156 @@
 	qcom,ath11k-calibration-variant = "Fairphone_5";
 	status = "okay";
 };
+
+// AUDIO - TEMP
+
+&lpass_audiocc {
+	compatible = "qcom,sm7325-lpassaudiocc",
+		     "qcom,qcm6490-lpassaudiocc";
+	/delete-property/ power-domains;
+ };
+
+&lpass_cpu { status = "disabled"; };
+
+&lpass_dmic01_clk {
+	drive-strength = <8>;
+	bias-disable;
+};
+
+&lpass_dmic01_data {
+	bias-pull-down;
+};
+
+&lpass_dmic23_clk {
+	drive-strength = <8>;
+	bias-disable;
+};
+
+&lpass_dmic23_data {
+	bias-pull-down;
+};
+
+&lpass_rx_macro {
+	clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&q6afecc LPASS_CLK_ID_TX_CORE_NPL_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&lpass_va_macro>;
+	clock-names = "mclk", "npl", "macro", "dcodec", "fsgen";
+
+	clock-output-names = "mclk";
+
+	/delete-property/ power-domains;
+	/delete-property/ power-domain-names;
+};
+
+&lpass_rx_swr_clk {
+	drive-strength = <2>;
+	slew-rate = <1>;
+	bias-disable;
+};
+
+&lpass_rx_swr_data {
+	drive-strength = <2>;
+	slew-rate = <1>;
+	bias-bus-hold;
+};
+
+&lpass_tlmm {
+	clocks = <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+	clock-names = "core", "audio";
+};
+
+&lpass_tx_macro {
+	compatible = "qcom,sm7325-lpass-tx-macro",
+		     "qcom,sm8450-lpass-tx-macro"; // txmacro = v9.2
+
+	clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&q6afecc LPASS_CLK_ID_TX_CORE_NPL_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&lpass_va_macro>;
+	clock-names = "mclk", "npl", "macro", "dcodec", "fsgen";
+
+	clock-output-names = "mclk";
+
+	/delete-property/ power-domains;
+	/delete-property/ power-domain-names;
+};
+
+&lpass_tx_swr_clk {
+	drive-strength = <2>;
+	slew-rate = <1>;
+	bias-disable;
+};
+
+&lpass_tx_swr_data {
+	drive-strength = <2>;
+	slew-rate = <1>;
+	bias-bus-hold;
+};
+
+&lpass_va_macro {
+	clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+		 <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+	clock-names = "mclk", "macro", "dcodec";
+
+	clock-output-names = "fsgen";
+
+	/delete-property/ power-domains;
+	/delete-property/ power-domain-names;
+};
+
+// AUDIO TEMP 2
+
+&lpass_rx_macro {
+	status = "okay";
+};
+
+&lpass_tx_macro {
+	status = "okay";
+};
+
+&lpass_va_macro {
+	qcom,dmic-sample-rate = <4800000>;
+	vdd-micb-supply = <&vreg_bob>;
+	status = "okay";
+};
+
+&swr0 {
+	status = "okay";
+
+	wcd_rx: codec@0,4 {
+		compatible = "sdw20217010d00";
+		reg = <0 4>;
+
+		qcom,rx-port-mapping = <1 2 3 4 5>;
+	};
+};
+
+&swr1 {
+	status = "okay";
+
+	wcd_tx: codec@0,3 {
+		compatible = "sdw20217010d00";
+		reg = <0 3>;
+
+		qcom,tx-port-mapping = <1 2 3 4>;
+	};
+};
+
+&mdss {
+	status = "okay";
+};
+
+&mdss_dp {
+	status = "okay";
+};
+
+&mdss_dp_out {
+	data-lanes = <0 1>;
+	remote-endpoint = <&usb_dp_qmpphy_dp_in>;
+};
+
